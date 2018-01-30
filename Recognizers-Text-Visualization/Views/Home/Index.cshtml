@@ -1,0 +1,106 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+    ViewBag.Options = new List<String>
+    {
+        "NumberModel",
+        "OrdinalModel",
+        "PercentageModel",
+        "AgeModel",
+        "CurrencyModel",
+        "DimensionModel",
+        "TemperatureModel",
+        "DateTimeModel"
+    };
+}
+
+<div class="jumbotron">
+    <h1>Recognizers-Text Visualization</h1>
+    <p class="lead">
+        Microsoft.Recognizers.Text provides robust recognition and resolution of numbers,
+        units, and date/time expressed in multiple languages. Support for Chinese, English, French,
+        Spanish, and Portuguese. Partial support for German.
+    </p>
+</div>
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="list-group">
+            @foreach (var text in ViewBag.Texts)
+            {
+                <a href="#" class="list-group-item" onclick="selectText(@text.Id);"> @text.Content.Substring(0, Math.Min(20, text.Content.Length)) ...</a>
+            }
+        </div>
+        <div class="row">
+            <button class="btn btn-primary col-md-8 col-md-offset-2" data-toggle="modal" data-target="#textModal">Add your new text.</button>
+        </div>
+        <div class="modal fade" id="textModal" tabindex="-1" role="dialog" aria-labelledby="textModal">
+            @model Recognizers_Text_Visualization.Models.Text
+            @using (Html.BeginForm("Create", "Api"))
+            {
+                @Html.AntiForgeryToken()
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title" id="myModalLabel">Create new text.</h4>
+                        </div>
+                        <div class="modal-body">
+
+                            <div class="form-horizontal">
+                                @Html.ValidationSummary(true, "", new {@class = "text-danger"})
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Content, htmlAttributes: new {@class = "control-label col-md-2"})
+                                    <div class="col-md-10">
+                                        @Html.TextAreaFor(model => model.Content, 10, 40, new {@class = "form-control"})
+                                        @Html.ValidationMessageFor(model => model.Content, "", new {@class = "text-danger"})
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Language, htmlAttributes: new {@class = "control-label col-md-2"})
+                                    <div class="col-md-10">
+                                        @Html.EnumDropDownListFor(model => model.Language, htmlAttributes: new {@class = "form-control"})
+                                        @Html.ValidationMessageFor(model => model.Language, "", new {@class = "text-danger"})
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <input type="submit" value="Create" class="btn btn-primary"/>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="col-md-6" id="textArea"> </div>
+
+    <div class="col-md-3" id="optionArea">
+        @{ var i = 1; }
+        @foreach (var option in ViewBag.Options)
+        {
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" value="@(i++)"/>
+                    @option
+                </label>
+            </div>
+        }
+        <button class="btn btn-primary" onclick="getRocognizeResults();">Test!</button>
+    </div>
+</div>
+
+<div>
+    <div class="col-md-12">
+        <pre class="language-json" id="jsonArea"> </pre>
+    </div>
+</div>
+<input hidden="hidden" id="viewbagTextJson" value="@ViewBag.TextJson">
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

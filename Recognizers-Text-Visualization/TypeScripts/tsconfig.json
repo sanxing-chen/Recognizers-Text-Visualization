@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "noImplicitAny": true,
+    "removeComments": false,
+    "sourceMap": true,
+    "target": "es5",
+    "strictNullChecks": true
+  },
+  "files": [
+    "./app.ts"
+  ],
+  "compileOnSave": true
+}
